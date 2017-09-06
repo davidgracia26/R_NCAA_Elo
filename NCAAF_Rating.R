@@ -7,7 +7,9 @@ games$Loser <- gsub("(\\(\\d{1,2}\\)\\s)","",games$Loser)
 teams.in.both.columns <- intersect(games$Winner,games$Loser)
 teams.in.winners.not.losers <- setdiff(games$Winner,games$Loser)
 teams.in.losers.not.winners <- setdiff(games$Loser,games$Winner)
-teams.in.both.columns <- c(teams.in.both.columns,teams.in.winners.not.losers, teams.in.losers.not.winners)
+teams.in.both.columns <- c(teams.in.both.columns,
+                           teams.in.winners.not.losers, 
+                           teams.in.losers.not.winners)
 
 #Don't forget about West Texas State -> UTEP and Southwest Tx -> Texas St
 
@@ -20,7 +22,7 @@ games$E_Loser <- c(0)
 dates <- as.character(unique(games$Date))
 games$Date <- as.character(games$Date)
 
-rating.history <- matrix(nrow = length(dates),ncol = length(teams.in.both.columns))
+rating.history <- matrix(nrow = length(dates), ncol = length(teams.in.both.columns))
 
 rownames(rating.history) <- dates
 colnames(rating.history) <- teams.in.both.columns
@@ -122,8 +124,8 @@ for (i in 1:nrow(games)) {
   teams.df[games[i,]$Winner, "Game_Index"] <- teams.df[games[i,]$Winner, "Game_Index"] + 1
   teams.df[games[i,]$Loser, "Game_Index"] <- teams.df[games[i,]$Loser, "Game_Index"] + 1
   
-  rating.history[games[i,]$Date,games[i,]$Winner] <- winner.rating
-  rating.history[games[i,]$Date,games[i,]$Loser] <- loser.rating
+  rating.history[games[i,]$Date, games[i,]$Winner] <- winner.rating
+  rating.history[games[i,]$Date, games[i,]$Loser] <- loser.rating
 }
 
 teams.df[order(-teams.df$Rating),]
@@ -141,8 +143,8 @@ fbs.history <- rating.history[,fbs.teams]
 
 avg.elo.all.time <- matrix(nrow = length(fbs.teams), ncol = 1)
 rownames(avg.elo.all.time) <- fbs.teams
+
 for (j in 1:length(fbs.teams)) {
-  
   avg.elo.all.time[j,] <- mean(fbs.history[,j], na.rm = TRUE)
 }
-avg.elo.all.time[order(avg.elo.all.time[,1],decreasing = TRUE),]
+avg.elo.all.time[order(avg.elo.all.time[,1], decreasing = TRUE),]
