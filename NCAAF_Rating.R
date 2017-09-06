@@ -1,17 +1,13 @@
 games <- read.csv("College_Football_Games_4.csv")
 
-# (\(\d{1,2}\)\s)
+# Removes rankings i.e. (25) from the team name
 games$Winner <- gsub("(\\(\\d{1,2}\\)\\s)","",games$Winner)
 games$Loser <- gsub("(\\(\\d{1,2}\\)\\s)","",games$Loser)
 
 teams.in.both.columns <- intersect(games$Winner,games$Loser)
-length(teams.in.both.columns)
 teams.in.winners.not.losers <- setdiff(games$Winner,games$Loser)
-length(teams.in.winners.not.losers)
 teams.in.losers.not.winners <- setdiff(games$Loser,games$Winner)
-length(teams.in.losers.not.winners)
 teams.in.both.columns <- c(teams.in.both.columns,teams.in.winners.not.losers, teams.in.losers.not.winners)
-length(teams.in.both.columns)
 
 #Don't forget about West Texas State -> UTEP and Southwest Tx -> Texas St
 
@@ -29,7 +25,6 @@ rating.history <- matrix(nrow = length(dates),ncol = length(teams.in.both.column
 rownames(rating.history) <- dates
 colnames(rating.history) <- teams.in.both.columns
 
-# teams.df <- data.frame(teams.in.both.columns,c(0),c(1300),c(0),c(1869),c(0),c(0),c(0))
 teams.df <- data.frame(integer(length(teams.in.both.columns)),
                        rep(1300,length(teams.in.both.columns)),
                        rep(1869,length(teams.in.both.columns)),
@@ -37,7 +32,13 @@ teams.df <- data.frame(integer(length(teams.in.both.columns)),
                        integer(length(teams.in.both.columns)),
                        integer(length(teams.in.both.columns)))
 
-colnames(teams.df) <- c("Game_Index","Rating","Latest_Year","Wins","Losses","Ties")
+colnames(teams.df) <- c("Game_Index",
+                        "Rating",
+                        "Latest_Year",
+                        "Wins",
+                        "Losses",
+                        "Ties")
+
 rownames(teams.df) <- teams.in.both.columns
 
 initial.rating <- 1500
@@ -53,9 +54,6 @@ k.factor <- 800 / (ne + games.in.season)
 
 model.correct <- 0
 model.wrong <- 0
-
-head(games)
-head(teams.df)
 
 for (i in 1:nrow(games)) {
 
@@ -148,18 +146,3 @@ for (j in 1:length(fbs.teams)) {
   avg.elo.all.time[j,] <- mean(fbs.history[,j], na.rm = TRUE)
 }
 avg.elo.all.time[order(avg.elo.all.time[,1],decreasing = TRUE),]
-
-# scen_a <- subset(games,games$E_Winner - games$E_Loser > 0.25)
-# scen_b <- subset(games,games$E_Winner - games$E_Loser < 0.25 & games,games$E_Winner - games$E_Loser > 0)
-# scen_c <- subset(games,games$E_Winner - games$E_Loser < 0 & games,games$E_Winner - games$E_Loser > -0.25)
-# scen_d <- subset(games,games$E_Winner - games$E_Loser < -0.25)
-# scen_e <- subset(games,games$E_Winner - games$E_Loser > 0)
-# scen_f <- subset(games,games$E_Winner - games$E_Loser < 0)
-
-
-# matplot(rating.history)
-# matplot(fbs.history)
-# plot(fbs.history[,"Texas"],pch="*")
-#
-# plot(fbs.history[,"Texas A&M"],pch="*",ylim=c(yfloor,yceil))
-# abline(h=1500, untf=FALSE, lty=2)
